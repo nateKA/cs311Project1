@@ -31,7 +31,7 @@ public class HashTable
 		numBuckets = 0;
 
 		hashFunction = new HashFunction(size);
-		size = illegalSearchAndSiezureOfP();
+		size = illegalSearchAndSeizureOfP();
 		table = createTable(size);
 	}
 	public static void main(String[] args){
@@ -42,8 +42,7 @@ public class HashTable
 
 	public int maxLoad()
 	{
-		// implementation
-		return 0;
+		return numElements / numBuckets;
 	}
 
 	public float averageLoad()
@@ -59,7 +58,6 @@ public class HashTable
 
 	public int numElements()
 	{
-		// implementation
 		return numElements;
 	}
 
@@ -109,16 +107,24 @@ public class HashTable
 		return count;
 	}
 
-	public void remove(Tuple t) {
-		// implementation
+	public void remove(Tuple t)
+	{
 		numElements--;
+		int hash = hashFunction.hash(t.getKey());
+		if (table[hash] == null) {
+			return;
+		}
+		table[hash].remove(t);
+		if(table[hash].size() == 0){
+			numBuckets--;
+		}
 	}
 
 	/**
 	 * time = O(1)
 	 * @return
 	 */
-	private int illegalSearchAndSiezureOfP(){
+	private int illegalSearchAndSeizureOfP(){
 		try {
 			Class c = HashFunction.class;
 			Field f = c.getDeclaredField("p");
