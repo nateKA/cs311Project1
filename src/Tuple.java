@@ -27,35 +27,22 @@ public class Tuple
 	public int getKey()
 	{
 		// implementation
-<<<<<<< HEAD
 		return this.keyP;
-=======
-		return 0;
->>>>>>> 04257d0b93fd59aa6afcc34f6dcedf55dad05f9e
 	}
 
 	public String getValue()
 	{
 		// implementation
-<<<<<<< HEAD
 		return this.valueP;
-=======
-		return null;
->>>>>>> 04257d0b93fd59aa6afcc34f6dcedf55dad05f9e
 	}
 
 	public boolean equals(Tuple t)
 	{
 		// implementation
-<<<<<<< HEAD
 		if(this.keyP == t.keyP && this.valueP == t.valueP) {
 			return true;
-		}
-		else {
+		}else {
 			return false;
 		}
-=======
-		return false;
->>>>>>> 04257d0b93fd59aa6afcc34f6dcedf55dad05f9e
 	}
 }

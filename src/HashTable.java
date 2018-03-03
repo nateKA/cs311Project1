@@ -19,15 +19,23 @@ public class HashTable
 	// member fields and other member methods
 
 	private HashFunction hashFunction;
+	Object[] table;
+	int numElements;
 
 	public HashTable(int size)
 	{
 		// implementation
+		numElements = 0;
+
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSiezureOfP();
+		table = new Object[size];
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
+		for(Object o: table.table){
+			System.out.println(o);
+		}
 	}
 
 	public int maxLoad()
@@ -44,14 +52,13 @@ public class HashTable
 
 	public int size()
 	{
-		// implementation
-		return 0;
+		return table.length;
 	}
 
 	public int numElements()
 	{
 		// implementation
-		return 0;
+		return numElements;
 	}
 
 	public float loadFactor()
@@ -63,6 +70,12 @@ public class HashTable
 	public void add(Tuple t)
 	{
 		// implementation
+		numElements++;
+		int hash = hashFunction.hash(t.getKey());
+		if(table[hash] == null)
+			table[hash] = t;
+		else
+			table[hash] = t;//TODO: link t to table[hash]
 	}
 
 	public ArrayList<Tuple> search(int k)
@@ -77,11 +90,15 @@ public class HashTable
 		return 0;
 	}
 
-	public void remove(Tuple t)
-	{
+	public void remove(Tuple t) {
 		// implementation
+		numElements--;
 	}
 
+	/**
+	 * time = O(1)
+	 * @return
+	 */
 	private int illegalSearchAndSiezureOfP(){
 		try {
 			Class c = HashFunction.class;
