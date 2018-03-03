@@ -30,7 +30,7 @@ public class HashTable
 
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSiezureOfP();
-		table = (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
+		table = createTable(size);
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
@@ -115,5 +115,9 @@ public class HashTable
 			e.printStackTrace();
 		}
 		return -1;
+	}
+
+	private ArrayList<Tuple>[] createTable(int size){
+		return (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
 	}
 }
