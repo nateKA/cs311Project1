@@ -21,12 +21,14 @@ public class HashTable
 
 	private HashFunction hashFunction;
 	int numElements;
+	int numBuckets;
 	ArrayList<Tuple>[] table;
 
 	public HashTable(int size)
 	{
 		// implementation
 		numElements = 0;
+		numBuckets = 0;
 
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSiezureOfP();
@@ -34,6 +36,7 @@ public class HashTable
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
+		table.add(null);
 		System.out.println(table.table[3]);
 	}
 
@@ -66,27 +69,42 @@ public class HashTable
 		return 0;
 	}
 
+	/**
+	 * time = O(1)
+	 * @param t
+	 */
 	public void add(Tuple t)
 	{
 		// implementation
+		if(t==null)return;
+
 		numElements++;
 		int hash = hashFunction.hash(t.getKey());
+
 		if(table[hash] == null) {
-            table[hash] = new ArrayList<>();
-            table[hash].add(t);
-        }
+			table[hash] = new ArrayList<>();
+		}
+
+		table[hash].add(t);
 	}
 
+	/**
+	 * time = O(1)
+	 * @param k
+	 * @return
+	 */
 	public ArrayList<Tuple> search(int k)
 	{
-		// implementation
-		return null;
+		return table[hashFunction.hash(k)];
 	}
 
 	public int search(Tuple t)
 	{
-		// implementation
-		return 0;
+		int count = 0;
+		for(Tuple c: table[hashFunction.hash(t.getKey())]){
+			if(c.equals(t)) count++;
+		}
+		return count;
 	}
 
 	public void remove(Tuple t) {
