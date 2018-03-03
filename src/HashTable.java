@@ -7,6 +7,7 @@
 // DO NOT INCLUDE LIBRARIES OUTSIDE OF THE JAVA STANDARD LIBRARY
 //  (i.e., you may include java.util.ArrayList etc. here, but not junit, apache commons, google guava, etc.)
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +18,16 @@ public class HashTable
 {
 	// member fields and other member methods
 
+	private HashFunction hashFunction;
+
 	public HashTable(int size)
 	{
 		// implementation
+		hashFunction = new HashFunction(size);
+		size = illegalSearchAndSiezureOfP();
+	}
+	public static void main(String[] args){
+		HashTable table = new HashTable(5);
 	}
 
 	public int maxLoad()
@@ -71,6 +79,25 @@ public class HashTable
 
 	public void remove(Tuple t)
 	{
-		// implementation		
+		// implementation
+	}
+
+	private int illegalSearchAndSiezureOfP(){
+		try {
+			Class c = HashFunction.class;
+			Field f = c.getDeclaredField("p");
+
+			//this is the illegal part
+			f.setAccessible(true);
+			int p = f.getInt(hashFunction);
+
+			//we were never here
+			f.setAccessible(false);
+
+			return p;
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

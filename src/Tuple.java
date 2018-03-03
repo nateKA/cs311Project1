@@ -23,15 +23,18 @@ public class Tuple
 	public int getKey()
 	{
 		// implementation
+		return 0;
 	}
 
 	public String getValue()
 	{
 		// implementation
+		return null;
 	}
 
 	public boolean equals(Tuple t)
 	{
 		// implementation
+		return false;
 	}
 }
