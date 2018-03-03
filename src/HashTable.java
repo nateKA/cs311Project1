@@ -83,9 +83,11 @@ public class HashTable
 
 		if(table[hash] == null) {
 			table[hash] = new ArrayList<>();
+			numBuckets++;
+		}else {
+			if(table[hash].size() == 0)numBuckets++;
+			table[hash].add(t);
 		}
-
-		table[hash].add(t);
 	}
 
 	/**
