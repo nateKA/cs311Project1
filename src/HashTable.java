@@ -23,12 +23,14 @@ public class HashTable
 	int numElements;
 	int numBuckets;
 	ArrayList<Tuple>[] table;
+	ArrayList<Tuple> largestBucket;
 
 	public HashTable(int size)
 	{
 		// implementation
 		numElements = 0;
 		numBuckets = 0;
+		largestBucket = null;
 
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSeizureOfP();
@@ -79,12 +81,18 @@ public class HashTable
 		numElements++;
 		int hash = hashFunction.hash(t.getKey());
 
+		//update table and bucket count
 		if(table[hash] == null) {
 			table[hash] = new ArrayList<>();
 			numBuckets++;
 		}else {
 			if(table[hash].size() == 0)numBuckets++;
 			table[hash].add(t);
+		}
+
+		//update largest bucket
+		if(largestBucket == null || largestBucket.size() < table[hash].size()){
+			largestBucket = table[hash];
 		}
 	}
 
