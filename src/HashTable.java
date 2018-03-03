@@ -7,6 +7,7 @@
 // DO NOT INCLUDE LIBRARIES OUTSIDE OF THE JAVA STANDARD LIBRARY
 //  (i.e., you may include java.util.ArrayList etc. here, but not junit, apache commons, google guava, etc.)
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -19,8 +20,8 @@ public class HashTable
 	// member fields and other member methods
 
 	private HashFunction hashFunction;
-	Object[] table;
 	int numElements;
+	ArrayList<Tuple>[] table;
 
 	public HashTable(int size)
 	{
@@ -29,13 +30,11 @@ public class HashTable
 
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSiezureOfP();
-		table = new Object[size];
+		table = (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
-		for(Object o: table.table){
-			System.out.println(o);
-		}
+		System.out.println(table.table[3]);
 	}
 
 	public int maxLoad()
@@ -72,10 +71,10 @@ public class HashTable
 		// implementation
 		numElements++;
 		int hash = hashFunction.hash(t.getKey());
-		if(table[hash] == null)
-			table[hash] = t;
-		else
-			table[hash] = t;//TODO: link t to table[hash]
+		if(table[hash] == null) {
+            table[hash] = new ArrayList<>();
+            table[hash].add(t);
+        }
 	}
 
 	public ArrayList<Tuple> search(int k)
