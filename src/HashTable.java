@@ -75,7 +75,7 @@ public class HashTable
 
 	public float loadFactor()
 	{
-		return numElements / numBuckets;
+		return (float)numElements / (float)buckets.length ;
 	}
 
 	/**
@@ -159,6 +159,7 @@ public class HashTable
 	private void resize(){
 		HashTable newTable = new HashTable(buckets.length*2+1);
 		for(ArrayList<Tuple> bucket: buckets){
+			if(bucket==null)continue;
 			for(Tuple t: bucket){
 				newTable.add(t);
 			}
