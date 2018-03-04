@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 // LEAVE THIS FILE IN THE DEFAULT PACKAGE
 //  (i.e., DO NOT add 'package cs311.pa1;' or similar)
 
@@ -11,18 +13,41 @@
 * @author Hugh Potter
 */
 
+
 public class BruteForceSimilarity
 {
+	
 	// member fields and other member methods
-
+	private String s1,s2;
+	private int sLength;
+	private ArrayList<String> S = new ArrayList<String>();
+	private ArrayList<String> T = new ArrayList<String>();
+	
+	public static void main(String[] args){ 
+		String s1 = "rosesarered";
+		String s2 = "rosesarenot";
+		BruteForceSimilarity x = new BruteForceSimilarity(s1,s2,3);
+		//x.printS();
+	} 
+	
 	public BruteForceSimilarity(String s1, String s2, int sLength)
 	{
-		// implementation
+		this.s1 = s1;
+		this.s2 = s2;
+		this.sLength = sLength;
+	}
+	
+	public void printS() {
+		for(String x: this.S) {
+			System.out.print(x);
+		}
 	}
 
 	public float lengthOfS1()
 	{
 		// implementation
+		// vector = sqrt (F(shingle,occurance)^2)
+		//
 		return 0;
 	}
 
@@ -36,5 +61,7 @@ public class BruteForceSimilarity
 	{
 		// implementation
 		return 0;
+		
+		
 	}
 }

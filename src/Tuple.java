@@ -39,6 +39,9 @@ public class Tuple
 	public boolean equals(Tuple t)
 	{
 		// implementation
+		if(t==null) {
+			return false;
+		}
 		if(this.keyP == t.keyP && this.valueP == t.valueP) {
 			return true;
 		}else {
