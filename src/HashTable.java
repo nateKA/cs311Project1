@@ -106,6 +106,11 @@ public class HashTable
 		return table[hashFunction.hash(k)];
 	}
 
+	/**
+	 * time = 0(b) where b=size of bucket
+	 * @param t
+	 * @return
+	 */
 	public int search(Tuple t)
 	{
 		int count = 0;
@@ -126,6 +131,24 @@ public class HashTable
 		if(table[hash].size() == 0){
 			numBuckets--;
 		}
+	}
+
+	/**
+	 * time = O(n*m(i)) where n=size of table; m(i)=size of bucket in index i
+	 */
+	private void resize(){
+		HashTable newTable = new HashTable(table.length*2+1);
+		for(ArrayList<Tuple> bucket: table){
+			for(Tuple t: bucket){
+				newTable.add(t);
+			}
+		}
+
+		table = newTable.table;
+		largestBucket = newTable.largestBucket;
+		numElements = newTable.numElements;
+		numBuckets = newTable.numBuckets;
+		hashFunction = newTable.hashFunction;
 	}
 
 	/**
