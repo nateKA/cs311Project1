@@ -87,6 +87,7 @@ public class HashTable
 		//update table and bucket count
 		if(table[hash] == null) {
 			table[hash] = new ArrayList<>();
+			table[hash].add(t);
 			numBuckets++;
 		}else {
 			if(table[hash].size() == 0)numBuckets++;
@@ -94,7 +95,8 @@ public class HashTable
 		}
 
 		//update largest bucket
-		if(largestBucket == null || largestBucket.size() < table[hash].size()){
+		if(largestBucket == null
+				|| largestBucket.size() < table[hash].size()){
 			largestBucket = table[hash];
 		}
 	}
@@ -192,5 +194,25 @@ public class HashTable
 
 	private ArrayList<Tuple>[] createTable(int size){
 		return (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
+	}
+
+	public HashFunction getHashFunction() {
+		return hashFunction;
+	}
+
+	public int getNumElements() {
+		return numElements;
+	}
+
+	public int getNumBuckets() {
+		return numBuckets;
+	}
+
+	public ArrayList<Tuple>[] getTable() {
+		return table;
+	}
+
+	public ArrayList<Tuple> getLargestBucket() {
+		return largestBucket;
 	}
 }
