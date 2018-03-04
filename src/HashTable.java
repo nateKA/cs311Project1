@@ -44,7 +44,7 @@ public class HashTable
 
 	public int maxLoad()
 	{
-		return numElements / numBuckets;
+		return largestBucket.size();
 	}
 
 	public float averageLoad()
@@ -65,8 +65,7 @@ public class HashTable
 
 	public float loadFactor()
 	{
-		// implementation
-		return 0;
+		return numElements / numBuckets;
 	}
 
 	/**
@@ -117,16 +116,29 @@ public class HashTable
 
 	public void remove(Tuple t)
 	{
-		numElements--;
 		int hash = hashFunction.hash(t.getKey());
 		if (table[hash] == null) {
 			return;
 		}
 		table[hash].remove(t);
+        numElements--;
 		if(table[hash].size() == 0){
 			numBuckets--;
 		}
+		else if(table[hash].equals(largestBucket)) {
+            findLargestBucket();
+        }
 	}
+
+	public void findLargestBucket(){
+	    ArrayList<Tuple> largest = table[0];
+	    for(int i = 1; i < table.length; i++){
+	        if(table[i].size() > largest.size()){
+	            largest = table[i];
+            }
+        }
+        largestBucket = largest;
+    }
 
 	/**
 	 * time = O(1)
