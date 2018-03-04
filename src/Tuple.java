@@ -45,4 +45,8 @@ public class Tuple
 			return false;
 		}
 	}
+
+	public String toString(){
+		return keyP+", "+valueP;
+	}
 }

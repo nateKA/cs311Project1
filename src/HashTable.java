@@ -22,7 +22,7 @@ public class HashTable
 	private HashFunction hashFunction;
 	int numElements;
 	int numBuckets;
-	ArrayList<Tuple>[] buckets;
+	ArrayList<Tuple>[] table;
 	ArrayList<Tuple> largestBucket;
 
 	public HashTable(int size)
@@ -34,12 +34,12 @@ public class HashTable
 
 		hashFunction = new HashFunction(size);
 		size = illegalSearchAndSeizureOfP();
-		buckets = createTable(size);
+		table = createTable(size);
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
 		table.add(null);
-		System.out.println(table.buckets[3]);
+		System.out.println(table.table[3]);
 	}
 
 	public int maxLoad()
@@ -51,15 +51,15 @@ public class HashTable
     {
         int average = 0;
 
-        for(int i = 1; i < buckets.length; i++){
-            average += buckets[i].size();
+        for(int i = 1; i < table.length; i++){
+            average += table[i].size();
         }
-        return average / buckets.length;
+        return average / table.length;
 	}
 
 	public int size()
 	{
-		return buckets.length;
+		return table.length;
 	}
 
 	public int numElements()
@@ -85,17 +85,19 @@ public class HashTable
 		int hash = hashFunction.hash(t.getKey());
 
 		//update table and bucket count
-		if(buckets[hash] == null) {
-			buckets[hash] = new ArrayList<>();
+		if(table[hash] == null) {
+			table[hash] = new ArrayList<>();
+			table[hash].add(t);
 			numBuckets++;
 		}else {
-			if(buckets[hash].size() == 0)numBuckets++;
-			buckets[hash].add(t);
+			if(table[hash].size() == 0)numBuckets++;
+			table[hash].add(t);
 		}
 
 		//update largest bucket
-		if(largestBucket == null || largestBucket.size() < buckets[hash].size()){
-			largestBucket = buckets[hash];
+		if(largestBucket == null
+				|| largestBucket.size() < table[hash].size()){
+			largestBucket = table[hash];
 		}
 	}
 
@@ -106,7 +108,7 @@ public class HashTable
 	 */
 	public ArrayList<Tuple> search(int k)
 	{
-		return buckets[hashFunction.hash(k)];
+		return table[hashFunction.hash(k)];
 	}
 
 	/**
@@ -117,7 +119,7 @@ public class HashTable
 	public int search(Tuple t)
 	{
 		int count = 0;
-		for(Tuple c: buckets[hashFunction.hash(t.getKey())]){
+		for(Tuple c: table[hashFunction.hash(t.getKey())]){
 			if(c.equals(t)) count++;
 		}
 		return count;
@@ -126,24 +128,31 @@ public class HashTable
 	public void remove(Tuple t)
 	{
 		int hash = hashFunction.hash(t.getKey());
-		if (buckets[hash] == null) {
+		if (table[hash] == null || t==null) {
 			return;
 		}
-		buckets[hash].remove(t);
+
+		for(int i = 0; i < table[hash].size(); i++){
+			if(table[hash].get(i).equals(t)) {
+				table[hash].remove(i);
+				break;
+			}
+		}
+
         numElements--;
-		if(buckets[hash].size() == 0){
+		if(table[hash].size() == 0){
 			numBuckets--;
 		}
-		else if(buckets[hash].equals(largestBucket)) {
+		if(table[hash]==(largestBucket)) {
             findLargestBucket();
         }
 	}
 
 	public void findLargestBucket(){
-	    ArrayList<Tuple> largest = buckets[0];
-	    for(int i = 1; i < buckets.length; i++){
-	        if(buckets[i].size() > largest.size()){
-	            largest = buckets[i];
+	    ArrayList<Tuple> largest = table[0];
+	    for(int i = 1; i < table.length; i++){
+	        if(largest == null || (table[i] != null && table[i].size() >= largest.size())){
+	            largest = table[i];
             }
         }
         largestBucket = largest;
@@ -153,14 +162,14 @@ public class HashTable
 	 * time = O(n*m(i)) where n=size of table; m(i)=size of bucket in index i
 	 */
 	private void resize(){
-		HashTable newTable = new HashTable(buckets.length*2+1);
-		for(ArrayList<Tuple> bucket: buckets){
+		HashTable newTable = new HashTable(table.length*2+1);
+		for(ArrayList<Tuple> bucket: table){
 			for(Tuple t: bucket){
 				newTable.add(t);
 			}
 		}
 
-		buckets = newTable.buckets;
+		table = newTable.table;
 		largestBucket = newTable.largestBucket;
 		numElements = newTable.numElements;
 		numBuckets = newTable.numBuckets;
@@ -192,5 +201,25 @@ public class HashTable
 
 	private ArrayList<Tuple>[] createTable(int size){
 		return (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
+	}
+
+	public HashFunction getHashFunction() {
+		return hashFunction;
+	}
+
+	public int getNumElements() {
+		return numElements;
+	}
+
+	public int getNumBuckets() {
+		return numBuckets;
+	}
+
+	public ArrayList<Tuple>[] getTable() {
+		return table;
+	}
+
+	public ArrayList<Tuple> getLargestBucket() {
+		return largestBucket;
 	}
 }
