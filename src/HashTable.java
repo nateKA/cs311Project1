@@ -128,15 +128,22 @@ public class HashTable
 	public void remove(Tuple t)
 	{
 		int hash = hashFunction.hash(t.getKey());
-		if (table[hash] == null) {
+		if (table[hash] == null || t==null) {
 			return;
 		}
-		table[hash].remove(t);
+
+		for(int i = 0; i < table[hash].size(); i++){
+			if(table[hash].get(i).equals(t)) {
+				table[hash].remove(i);
+				break;
+			}
+		}
+
         numElements--;
 		if(table[hash].size() == 0){
 			numBuckets--;
 		}
-		else if(table[hash].equals(largestBucket)) {
+		if(table[hash]==(largestBucket)) {
             findLargestBucket();
         }
 	}
@@ -144,7 +151,7 @@ public class HashTable
 	public void findLargestBucket(){
 	    ArrayList<Tuple> largest = table[0];
 	    for(int i = 1; i < table.length; i++){
-	        if(table[i].size() > largest.size()){
+	        if(largest == null || (table[i] != null && table[i].size() >= largest.size())){
 	            largest = table[i];
             }
         }
