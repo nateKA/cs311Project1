@@ -48,9 +48,13 @@ public class HashTable
 	}
 
 	public float averageLoad()
-	{
-		// implementation
-		return 0;
+    {
+        int average = 0;
+
+        for(int i = 1; i < table.length; i++){
+            average += table[i].size();
+        }
+        return average / table.length;
 	}
 
 	public int size()
