@@ -10,51 +10,84 @@ import java.util.ArrayList;
 //  (i.e., you may include java.util.ArrayList etc. here, but not junit, apache commons, google guava, etc.)
 
 /**
-* @author Hugh Potter
-*/
+ * @author Hugh Potter
+ */
 
-
-public class BruteForceSimilarity
-{
-	
+public class BruteForceSimilarity {
 	// member fields and other member methods
-	//private String s1,s2;
-	private int sLength;
 	private ArrayList<String> S = new ArrayList<String>();
 	private ArrayList<String> T = new ArrayList<String>();
-	
-	public BruteForceSimilarity(String s1, String s2, int sLength)
-	{
-		this.sLength = sLength;
-		
-		for(int i = 0; i < (s1.length() - sLength); i++) {
-			S.add(s1.substring(i, i + sLength));
-			System.out.println(s1.substring(i,i+sLength));
-		}
-		for(int i = 0; i < (s2.length() - sLength); i++) {
-			T.add(s2.substring(i,i + sLength));
-		}
-	}
-	
-	public float lengthOfS1()
-	{
-		// implementation
-		// vector = sqrt (F(shingle,occurance)^2)
-		//
-		return 0;
+	private ArrayList<String> U = new ArrayList<String>();
+
+	public static void main(String[] args) {
+		String s1 = "aroseisaroseisarose";
+		String s2 = "aroseisaflowerwhichisarose";
+		BruteForceSimilarity test = new BruteForceSimilarity(s1, s2, 4);
+		System.out.print(test.similarity() + "");
 	}
 
-	public float lengthOfS2()
-	{
-		// implementation
-		return 0;
+	public BruteForceSimilarity(String s1, String s2, int sLength) {
+		for (int i = 0; i < (s1.length() - sLength) + 1; i++) {
+			String toAdd = s1.substring(i, i + sLength);
+			S.add(toAdd);
+			if (!U.contains(toAdd)) {
+				U.add(toAdd);
+			}
+		}
+		for (int i = 0; i < (s2.length() - sLength) + 1; i++) {
+			String toAdd = s2.substring(i, i + sLength);
+			T.add(toAdd);
+			if (!U.contains(toAdd)) {
+				U.add(toAdd);
+			}
+		}
 	}
 
-	public float similarity()
-	{
-		// implementation
-		return 0;
+	public float lengthOfS1() {
+		return vectorLength(this.S);
+	
+	}
+
+	public float lengthOfS2() {
+		return vectorLength(this.T);
+	}
+
+	public float similarity() {
+		ArrayList<String> used = new ArrayList<String>();
+		float vector = 0;
+		for (String shingle : this.U) {
+			if (!used.contains(shingle)) {
+				int temp, temp1;
+				temp = duplicate(shingle, this.S);
+				temp1 = duplicate(shingle, this.T);
+				used.add(shingle);
+				vector = vector + (temp * temp1);
+			}
+		}
 		
-		
+		return vector /(lengthOfS1() * lengthOfS2());
+	}
+
+	private int duplicate(String shingle, ArrayList<String> list) {
+		int count = 0;
+		for (String check : list) {
+			if (check.equals(shingle)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	private float vectorLength(ArrayList<String> list) {
+		ArrayList<String> used = new ArrayList<String>();
+		float vectorLength = 0;
+		for (String shingle : list) {
+			if (!used.contains(shingle)) {
+				float function = duplicate(shingle, list);
+				vectorLength = vectorLength + (function * function);
+				used.add(shingle);
+			}
+		}
+		return (float) Math.sqrt(vectorLength);
 	}
 }
