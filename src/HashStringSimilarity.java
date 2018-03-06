@@ -16,12 +16,15 @@ public class HashStringSimilarity
 	// member fields and other member methods
 	String s1, s2;
 	int sLen;
+	float s1Len, s2Len;
 
 	public HashStringSimilarity(String s1, String s2, int sLength)
 	{
 		this.s1 = s1;
 		this.s2 = s2;
 		sLen = sLength;
+		s1Len = vectorLength(s1);
+		s2Len = vectorLength(s2);
 	}
 
 	public float vectorLength(String input){
@@ -49,12 +52,12 @@ public class HashStringSimilarity
 
 	public float lengthOfS1()
 	{
-		return s1.length();
+		return s1Len;
 	}
 
 	public float lengthOfS2()
 	{
-		return s2.length();
+		return s2Len;
 	}
 
 	public float similarity()
