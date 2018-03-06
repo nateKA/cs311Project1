@@ -25,31 +25,30 @@ public class HashStringSimilarity
 	}
 
 	public float vectorLength(String input){
-		int length = 0;
-		HashTable table = new HashTable(40); //number of alphanumeric char
-		for(int i = 0; i < input.length(); i++){
-			Tuple tuple = new Tuple(input.charAt(i) - '0', input.substring(i, i));
+		float length = 0;
+		int key;
+		HashTable table = new HashTable(50);
+		for(int i = 0; i <= input.length() - sLen; i++){
+			key = 0;
+			for(int j = 0; j < sLen; j++){
+				key += (int) input.charAt(i + j);
+				//System.out.println("Ascii: " + input.charAt(j + i) + " Value: " + (int) input.charAt(j + i));
+			}
+			Tuple tuple = new Tuple(key, input.substring(i, i + sLen));
 			table.add(tuple);
 		}
-		for(int i = 0; i < table.numBuckets; i++){
-			length += table.buckets[i].size();
+
+		for(int i = 0; i < table.buckets.length; i++){
+			if(table.buckets[i] != null){
+				length += (float) Math.pow(table.buckets[i].size(), 2);
+				System.out.println("bucket " + table.buckets[i] + " size: " + table.buckets[i].size());
+			}
 		}
-		return 0;
+		return (float) Math.sqrt(length);
 	}
 
 	public float lengthOfS1()
 	{
-		String temp = s1;
-		int len = 0;
-		int charCount = 0;
-		for(int i = 0; i < temp.length(); i++){
-			for(int j = 0; j < temp.length(); j++){
-				if(temp.charAt(i) == temp.charAt(j)){
-					charCount++;
-				}
-			}
-			charCount *= charCount;
-		}
 		return s1.length();
 	}
 
@@ -62,4 +61,9 @@ public class HashStringSimilarity
 	{
 		return 0;
 	}
+    public static void main(String[] args){
+       HashStringSimilarity test = new HashStringSimilarity("hello", "world", 2);
+       System.out.println(test.vectorLength("helloolleh"));
+       //System.out.println(test.vectorLength("world"));
+    }
 }
