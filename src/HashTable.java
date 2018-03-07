@@ -40,7 +40,7 @@ public class HashTable
 		Tuple t2 = new Tuple(2, "world");
 		table.add(t1);
 		table.add(t2);
-		table.printTable();
+		table.printTable(true);
 	}
 
 	public int maxLoad()
@@ -201,8 +201,9 @@ public class HashTable
 		return (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
 	}
 
-	public void printTable(){
+	public void printTable(boolean printNulls){
 		for(ArrayList<Tuple> bucket : buckets){
+			if(bucket != null || printNulls)
 			System.out.println(bucket);
 		}
 	}

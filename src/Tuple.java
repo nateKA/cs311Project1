@@ -50,6 +50,6 @@ public class Tuple
 	}
 
 	public String toString(){
-		return keyP+", "+valueP;
+		return keyP+" -> "+valueP;
 	}
 }

@@ -64,6 +64,7 @@ public class HashCodeSimilarity
 
 	public static void main(String[] args){
 		HashCodeSimilarity hcs = new HashCodeSimilarity("","",4);
-		HashTable table = hcs.getShingles("aaaabbbbeeeeyyyyoooozzzzaawd");
+		HashTable table = hcs.getShingles("1234567");
+		table.printTable(false);
 	}
 }
