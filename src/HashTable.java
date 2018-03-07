@@ -36,8 +36,11 @@ public class HashTable
 	}
 	public static void main(String[] args){
 		HashTable table = new HashTable(5);
-		table.add(null);
-		System.out.println(table.buckets[3]);
+		Tuple t1 = new Tuple(1, "hello");
+		Tuple t2 = new Tuple(2, "world");
+		table.add(t1);
+		table.add(t2);
+		table.printTable();
 	}
 
 	public int maxLoad()
@@ -196,6 +199,12 @@ public class HashTable
 
 	private ArrayList<Tuple>[] createTable(int size){
 		return (ArrayList<Tuple>[]) Array.newInstance(ArrayList.class, size);
+	}
+
+	public void printTable(){
+		for(ArrayList<Tuple> bucket : buckets){
+			System.out.println(bucket);
+		}
 	}
 
 	public HashFunction getHashFunction() {
