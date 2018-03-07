@@ -14,10 +14,15 @@
 public class HashCodeSimilarity
 {
 	// member fields and other member methods
+	String s1,s2;
+	int sLength;
 
 	public HashCodeSimilarity(String s1, String s2, int sLength)
 	{
 		// implementation
+		this.s1 = s1;
+		this.s2 = s2;
+		this.sLength = sLength;
 	}
 
 	public float lengthOfS1()
@@ -36,5 +41,29 @@ public class HashCodeSimilarity
 	{
 		// implementation
 		return 0;
+	}
+
+	private HashTable getShingles(String str){
+		int firstShingle = 0;
+		HashTable table = new HashTable(100);
+
+		for(int i = 0; i < sLength; i++){
+			firstShingle += (int)str.charAt(i);
+		}
+		Tuple t = new Tuple(firstShingle,str.substring(0,sLength));
+		table.add(t);
+
+		for(int i = 1; i < str.length()-sLength; i++){
+			int nextShingle = firstShingle - str.charAt(i-1) + str.charAt(i+sLength);
+			Tuple shingle = new Tuple(nextShingle,str.substring(i,i+sLength));
+			table.add(shingle);
+		}
+
+		return table;
+	}
+
+	public static void main(String[] args){
+		HashCodeSimilarity hcs = new HashCodeSimilarity("","",4);
+		HashTable table = hcs.getShingles("aaaabbbbeeeeyyyyoooozzzzaawd");
 	}
 }
