@@ -39,11 +39,18 @@ public class HashCodeSimilarity
 		HashTable table = new HashTable(255);
 		int sum = 0;
 		for(int i = 0; i < str.length(); i++){
+		    //we found another occurrence of i for f(S,i)
 			int key = str.charAt(i);
+
+			//subtract the old count for i
 			int contribution = table.search(key)==null?0:(table.search(key).size()*table.search(key).size());
 			sum -= contribution;
+
+			//tell table we found another i
 			Tuple t = new Tuple(key,""+str.charAt(i));
 			table.add(t);
+
+			//add the new calculation for f(S,i)
 			sum += table.search(key).size() * table.search(key).size();
 		}
 
