@@ -16,19 +16,107 @@ import java.util.ArrayList;
 public class HashCodeSimilarity
 {
 	// member fields and other member methods
-	String s1,s2;
-	int sLength;
-	HashTable union = new HashTable(300);
+	private int sLength;
+	private HashTable tableS1 = new HashTable(100);
+	private HashTable tableS2 = new HashTable(100);
+	private HashTable union = new HashTable(300);
 
 	public HashCodeSimilarity(String s1, String s2, int sLength)
 	{
 		// implementation
-		this.s1 = s1;
-		this.s2 = s2;
 		this.sLength = sLength;
+		buildTable(tableS1, s1);
+		buildTable(tableS2, s2);
 	}
 
-	private int probe(int i, Tuple t){
+	public float lengthOfS1()
+	{
+		return vectorLength(tableS1);
+	}
+
+	public float lengthOfS2()
+	{
+		return vectorLength(tableS2);
+	}
+
+	public float similarity()
+	{
+		float similarity = 0;
+		for(ArrayList<Tuple> bucket : union.buckets){
+			int countS1 = 0, countS2 = 0;
+			if(bucket != null) {
+				for (Tuple unionTuple : bucket) {
+					countS1 += duplicate(unionTuple, tableS1.buckets[tableS1.getHashFunction().hash(unionTuple.getKey())]);
+					countS2 += duplicate(unionTuple, tableS2.buckets[tableS2.getHashFunction().hash(unionTuple.getKey())]);
+					similarity += countS1 * countS2;
+				}
+			}
+		}
+		return similarity / (vectorLength(tableS1) * vectorLength(tableS2));
+	}
+
+	private void buildTable(HashTable table, String input){
+		double a = 6;
+		int sum = 0;
+
+		for(int i = 0; i < sLength; i++){
+			sum += input.charAt(i) * Math.pow(a,sLength-i-1);
+		}
+
+		Tuple tup = new Tuple(sum,input.substring(0,sLength));
+		table.add(tup);
+		int index = probe(sum);
+		if(union.search(index)==null)
+			union.add(new Tuple(index,tup.getValue()));
+
+		for(int i = 1; i <= input.length()-sLength; i++){
+			//we found another occurrence of i for f(S,i)
+			char passed = (char)(input.charAt(i-1)*Math.pow(a,sLength-1));
+			char arrived = input.charAt(i+sLength-1);
+			sum = (int)((sum - passed)*a) + arrived;
+
+			//tell table we found another i
+			Tuple t = new Tuple(sum,input.substring(i,i+sLength));
+			table.add(t);
+
+			//fill union
+			index = probe(sum);
+			if(union.search(index)==null)
+				union.add(new Tuple(index,t.getValue()));
+		}
+	}
+
+	private int duplicate(Tuple shingle, ArrayList<Tuple> tuples) {
+		int count = 0;
+		if(tuples == null){
+			return 0;
+		}
+		for (Tuple value : tuples) {
+			if (value.getKey() == shingle.getKey()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	private float vectorLength(HashTable table){
+		float vectorLength = 0;
+		for(ArrayList<Tuple> bucket : table.buckets){
+			if(bucket != null){
+				ArrayList<String> used = new ArrayList<>();
+				for(Tuple tuple : bucket){
+					if(!used.contains(tuple.getValue())){
+						int count = duplicate(tuple, bucket);
+						vectorLength += count * count;
+						used.add(tuple.getValue());
+					}
+				}
+			}
+		}
+		return (float) Math.sqrt(vectorLength);
+	}
+
+	private int probe(int i){
 		ArrayList<Tuple> a = union.search(i);
 		while(a!=null ){
 			if(a.get(0).getKey()==i)break;
@@ -38,184 +126,22 @@ public class HashCodeSimilarity
 		}
 		return i;
 	}
-	public float lengthOfS1()
-	{
-		HashTable table = new HashTable(100);
-		double a = 6;
-		int sum = 0;
-		float vector = 0;
-
-		for(int i = 0; i < sLength; i++){
-			sum += s1.charAt(i) * Math.pow(a,sLength-i-1);
-		}
-
-		Tuple tup = new Tuple(sum,s1.substring(0,sLength));
-		table.add(tup);
-		int index = probe(sum,tup);
-		if(union.search(index)==null)
-		union.add(new Tuple(index,tup.getValue()));
-		vector = 1;
-
-		for(int i = 1; i <= s1.length()-sLength; i++){
-			//we found another occurrence of i for f(S,i)
-			char passed = (char)(s1.charAt(i-1)*Math.pow(a,sLength-1));
-			char arrived = (char)(s1.charAt(i+sLength-1));
-			sum = (int)((sum - passed)*a) + arrived;
-
-			//subtract the old count for i
-			int value = 0;
-			if(table.search(sum)!=null)
-				for(Tuple k : table.search(sum)){
-					if(sum == k.getKey())
-						value++;
-				}
-			vector -= (value*value);
-
-			//tell table we found another i
-			Tuple t = new Tuple(sum,s1.substring(i,i+sLength));
-			table.add(t);
-
-			//fill union
-			index = probe(sum,t);
-			if(union.search(index)==null)
-			union.add(new Tuple(index,t.getValue()));
-
-			//add the new calculation for f(S,i)
-			value++;
-			vector += value*value;
-		}
-
-		union.printTable(false);
-
-		return (float)Math.sqrt(vector);
-	}
-
-	public float lengthOfS2()
-	{
-		HashTable table = new HashTable(100);
-		double a = 6;
-		int sum = 0;
-		float vector = 0;
-
-		for(int i = 0; i < sLength; i++){
-			sum += s2.charAt(i) * Math.pow(a,sLength-i-1);
-		}
-
-		Tuple tup = new Tuple(sum,s2.substring(0,sLength));
-		table.add(tup);
-		int index = probe(sum,tup);
-		if(union.search(index)==null)
-			union.add(new Tuple(index,tup.getValue()));
-		vector = 1;
-
-		for(int i = 1; i <= s2.length()-sLength; i++){
-			//we found another occurrence of i for f(S,i)
-			char passed = (char)(s2.charAt(i-1)*Math.pow(a,sLength-1));
-			char arrived = (char)(s2.charAt(i+sLength-1));
-			sum = (int)((sum - passed)*a) + arrived;
-
-			//subtract the old count for i
-			int value = 0;
-			if(table.search(sum)!=null)
-				for(Tuple k : table.search(sum)){
-					if(sum == k.getKey())
-						value++;
-				}
-			vector -= (value*value);
-
-			//tell table we found another i
-			Tuple t = new Tuple(sum,s2.substring(i,i+sLength));
-			table.add(t);
-
-			//fill union
-			index = probe(sum,t);
-			if(union.search(index)==null)
-				union.add(new Tuple(index,t.getValue()));
-
-			//add the new calculation for f(S,i)
-			value++;
-			vector += value*value;
-		}
-
-		return (float)Math.sqrt(vector);
-	}
-
-	/**
-	 * Time = O( m + n * k(i) ) where n = str.length()
-	 * @param str
-	 * @return
-	 */
-	private float vectorLengthHelper(String str){
-		HashTable table = new HashTable(100);
-		double a = 6;
-		int sum = 0;
-		float vector = 0;
-
-		for(int i = 0; i < sLength; i++){
-			sum += str.charAt(i) * Math.pow(a,sLength-i-1);
-		}
-
-		table.add(new Tuple(sum,str.substring(0,sLength)));
-		vector = 1;
-
-		for(int i = 1; i <= str.length()-sLength; i++){
-			//we found another occurrence of i for f(S,i)
-			char passed = (char)(str.charAt(i-1)*Math.pow(a,sLength-1));
-			char arrived = (char)(str.charAt(i+sLength-1));
-			sum = (int)((sum - passed)*a) + arrived;
-
-			//subtract the old count for i
-			int value = 0;
-			if(table.search(sum)!=null)
-			for(Tuple k : table.search(sum)){
-				if(sum == k.getKey())
-					value++;
-			}
-			vector -= (value*value);
-
-			//tell table we found another i
-			Tuple t = new Tuple(sum,str.substring(i,i+sLength));
-			table.add(t);
-			value++;
-
-			//add the new calculation for f(S,i)
-			vector += value*value;
-		}
-
-
-		table.printTable(false);
-		return vector;
-	}
-
-	public float similarity()
-	{
-		// implementation
-		return 0;
-	}
-
-	private HashTable getShingles(String str){
-		int firstShingle = 0;
-		HashTable table = new HashTable(100);
-
-		for(int i = 0; i < sLength; i++){
-			firstShingle += (int)str.charAt(i);
-		}
-		Tuple t = new Tuple(firstShingle,str.substring(0,sLength));
-		table.add(t);
-
-		for(int i = 1; i < str.length()-sLength+1; i++){
-			int nextShingle = firstShingle - str.charAt(i-1) + str.charAt(i+sLength-1);
-			Tuple shingle = new Tuple(nextShingle,str.substring(i,i+sLength));
-			table.add(shingle);
-		}
-
-		return table;
-	}
 
 	public static void main(String[] args){
 		//{1268264612
-		HashCodeSimilarity hcs = new HashCodeSimilarity("aroseisa","aroseisar",4);
-		hcs.lengthOfS2();
+		HashCodeSimilarity hcs = new HashCodeSimilarity("aroseisaroseisarose","aroseisaflowerwhichisarose",4);
+		//hcs.lengthOfS2();
+		//hcs.vectorLengthHelper(hcs.s2);
 		System.out.println(Math.pow(hcs.lengthOfS1(),2));
+		//System.out.println("///////////////////////////////////////////////////////////////");
+		//hcs.tableS2.printTable(false);
+		System.out.println(Math.pow(hcs.lengthOfS2(), 2));
+		System.out.println(hcs.similarity());
+		//hcs.tableS1.printTable(false);
+		//System.out.println("///////////////////////////////////////////////////////////////");
+		//hcs.union.printTable(false);
+		//System.out.println("///////////////////////////////////////////////////////////////");
+
+		//hcs.tableS2.printTable(false);
 	}
 }
