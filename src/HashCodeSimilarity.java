@@ -35,26 +35,72 @@ public class HashCodeSimilarity
 		return (float)Math.sqrt(vectorLengthHelper(s2));
 	}
 
+	/**
+	 * Time = O(n) where n = str.length()
+	 * @param str
+	 * @return
+	 */
 	private float vectorLengthHelper(String str){
-		HashTable table = new HashTable(255);
+		HashTable table = new HashTable(100);
+		double a = 6, m = a;
 		int sum = 0;
-		for(int i = 0; i < str.length(); i++){
-		    //we found another occurrence of i for f(S,i)
-			int key = str.charAt(i);
+		float vector = 0;
+
+		for(int i = 0; i < sLength; i++){
+			sum += str.charAt(i) * Math.pow(a,sLength-i-1);
+		}
+
+		table.add(new Tuple(sum,str.substring(0,sLength)));
+
+		for(int i = 1; i <= str.length()-sLength; i++){
+			//we found another occurrence of i for f(S,i)
+			char passed = (char)(str.charAt(i-1)*Math.pow(a,sLength-1));
+			char arrived = (char)(str.charAt(i+sLength-1));
+			sum = (int)((sum - passed)*a) + arrived;
+
+			Tuple t = new Tuple(sum,str.substring(i,i+sLength));
+			table.add(t);
+		}
+
+
+
+		table.printTable(false);
+		return vector;
+	}
+	private float vectorLengthHelper1(String str){
+		HashTable table = new HashTable(100);
+		double a = 6, m = a;
+		int sum = 0;
+		float vector = 0;
+
+		for(int i = 0; i < sLength; i++){
+			sum += str.charAt(i) * Math.pow(a,sLength-i-1);
+		}
+
+		table.add(new Tuple(sum,str.substring(0,sLength)));
+		vector += table.search(sum).size() * table.search(sum).size();
+
+		for(int i = 1; i <= str.length()-sLength; i++){
+			//we found another occurrence of i for f(S,i)
+			char passed = (char)(str.charAt(i-1)*Math.pow(a,sLength-1));
+			char arrived = (char)(str.charAt(i+sLength-1));
+			sum = (int)((sum - passed)*a) + arrived;
 
 			//subtract the old count for i
-			int contribution = table.search(key)==null?0:(table.search(key).size()*table.search(key).size());
-			sum -= contribution;
+			int value = table.search(sum)==null?0:table.search(sum).size();
+			vector -= (value*value);
 
 			//tell table we found another i
-			Tuple t = new Tuple(key,""+str.charAt(i));
+			Tuple t = new Tuple(sum,str.substring(i,i+sLength));
 			table.add(t);
 
 			//add the new calculation for f(S,i)
-			sum += table.search(key).size() * table.search(key).size();
+			vector += table.search(sum).size() * table.search(sum).size();
 		}
 
-		return sum;
+
+		table.printTable(false);
+		return vector;
 	}
 
 	public float similarity()
@@ -84,7 +130,7 @@ public class HashCodeSimilarity
 
 	public static void main(String[] args){
 		//{1268264612
-		HashCodeSimilarity hcs = new HashCodeSimilarity("1268264612","251188438",4);
-		System.out.println(hcs.lengthOfS1());
+		HashCodeSimilarity hcs = new HashCodeSimilarity("aroseisaroseisarose","aroseisaflowerwhichisarose",4);
+		System.out.println(Math.pow(hcs.lengthOfS2(),2));
 	}
 }
