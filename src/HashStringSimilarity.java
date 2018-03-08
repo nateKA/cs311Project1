@@ -22,6 +22,13 @@ public class HashStringSimilarity
 	private HashTable tableS1 = new HashTable(50);
 	private HashTable tableS2 = new HashTable(50);
 
+    /**
+     * Splits each string into substrings of given shingle length.
+     * Each substring is added to it's own arraylist, and if it is not already in the union it will be added.
+     * @param s1
+     * @param s2
+     * @param sLength
+     */
 	public HashStringSimilarity(String s1, String s2, int sLength)
 	{
 		for (int i = 0; i < (s1.length() - sLength) + 1; i++){
@@ -41,16 +48,28 @@ public class HashStringSimilarity
 		createTables();
 	}
 
+    /**
+     * get method for vector length of first string
+     * @return vector length
+     */
 	public float lengthOfS1()
 	{
 		return vectorLength(tableS1);
 	}
 
+    /**
+     * get method for vector length of second string
+     * @return vector length
+     */
 	public float lengthOfS2()
 	{
 		return vectorLength(tableS2);
 	}
 
+    /**
+     * calculates the similarity between the two strings using their hashtables
+     * @return similarity
+     */
 	public float similarity()
 	{
 		float similarity = 0;
@@ -60,6 +79,11 @@ public class HashStringSimilarity
 		return similarity / (vectorLength(tableS1) * vectorLength(tableS2));
 	}
 
+    /**
+     * calculates the vector length of a given table
+     * @param table is a table of substrings
+     * @return vector length
+     */
 	private float vectorLength(HashTable table){
 		float vectorLength = 0;
 		for(ArrayList<Tuple> bucket : table.buckets){
@@ -77,6 +101,10 @@ public class HashStringSimilarity
 		return (float) Math.sqrt(vectorLength);
 	}
 
+    /**
+     * creates the tables for each string
+     * TODO remove the extra array lists
+     */
 	private void createTables(){
 		for(String shingle : S){
 			tableS1.add(new Tuple(strValue(shingle), shingle));
@@ -86,6 +114,12 @@ public class HashStringSimilarity
 		}
 	}
 
+    /**
+     * counts the number of times a tuple appears in a list of tuples
+     * @param shingle tuple to compare to
+     * @param tuples list of tuples to compare with
+     * @return number of duplicates
+     */
 	private int duplicate(Tuple shingle, ArrayList<Tuple> tuples) {
 		int count = 0;
 		for (Tuple value : tuples) {
@@ -96,6 +130,11 @@ public class HashStringSimilarity
 		return count;
 	}
 
+    /**
+     * counts the number of times a string appears in each table.
+     * @param str to search for
+     * @return number of repetitions
+     */
 	private int similarityHelper(String str){
 		int count = 0;
 		Tuple tuple = new Tuple(strValue(str), str);
@@ -104,6 +143,11 @@ public class HashStringSimilarity
 		return count;
 	}
 
+    /**
+     * Adds the ascii value of each character in a string
+     * @param str to be calculated
+     * @return value of each char in str
+     */
 	private int strValue(String str){
 		int key = 0;
 		for(int i = 0; i < str.length(); i++){
