@@ -16,8 +16,6 @@ import java.util.ArrayList;
 public class HashStringSimilarity
 {
 	// member fields and other member methods
-	private ArrayList<String> S = new ArrayList<>();
-	private ArrayList<String> T = new ArrayList<>();
 	private ArrayList<String> U = new ArrayList<>();
 	private HashTable tableS1 = new HashTable(50);
 	private HashTable tableS2 = new HashTable(50);
@@ -25,27 +23,27 @@ public class HashStringSimilarity
     /**
      * Splits each string into substrings of given shingle length.
      * Each substring is added to it's own arraylist, and if it is not already in the union it will be added.
-     * @param s1
-     * @param s2
-     * @param sLength
+     * @param s1 input string1
+     * @param s2 input string2
+     * @param sLength shingle length
      */
 	public HashStringSimilarity(String s1, String s2, int sLength)
 	{
 		for (int i = 0; i < (s1.length() - sLength) + 1; i++){
 			String toAdd = s1.substring(i, i + sLength);
-			S.add(toAdd);
+			tableS1.add(new Tuple(strValue(toAdd), toAdd));
 			if (!U.contains(toAdd)) {
 				U.add(toAdd);
 			}
 		}
 		for (int i = 0; i < (s2.length() - sLength) + 1; i++) {
 			String toAdd = s2.substring(i, i + sLength);
-			T.add(toAdd);
+			tableS2.add(new Tuple(strValue(toAdd), toAdd));
 			if (!U.contains(toAdd)) {
 				U.add(toAdd);
 			}
 		}
-		createTables();
+		//createTables();
 	}
 
     /**
@@ -99,19 +97,6 @@ public class HashStringSimilarity
 			}
 		}
 		return (float) Math.sqrt(vectorLength);
-	}
-
-    /**
-     * creates the tables for each string
-     * TODO remove the extra array lists
-     */
-	private void createTables(){
-		for(String shingle : S){
-			tableS1.add(new Tuple(strValue(shingle), shingle));
-		}
-		for(String shingle : T){
-			tableS2.add(new Tuple(strValue(shingle), shingle));
-		}
 	}
 
     /**
