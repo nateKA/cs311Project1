@@ -130,7 +130,17 @@ public class HashTable
 	public int search(Tuple t)
 	{
 		int count = 0;
-		for(Tuple c: buckets[hashFunction.hash(t.getKey())]){
+		if(t == null){
+			return 0;
+		}
+		ArrayList<Tuple> tuples = buckets[hashFunction.hash(t.getKey())];
+		if(tuples == null){
+			return 0;
+		}
+		for(Tuple c: tuples){
+			if(c == null){
+				break;
+			}
 			if(c.equals(t)) count++;
 		}
 		return count;
