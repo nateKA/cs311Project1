@@ -7,6 +7,8 @@
 // DO NOT INCLUDE LIBRARIES OUTSIDE OF THE JAVA STANDARD LIBRARY
 //  (i.e., you may include java.util.ArrayList etc. here, but not junit, apache commons, google guava, etc.)
 
+import java.util.ArrayList;
+
 /**
 * @author Hugh Potter
 */
@@ -15,58 +17,120 @@ public class HashStringSimilarity
 {
 	// member fields and other member methods
 	String s1, s2;
-	int sLen;
+	int sLength;
 	float s1Len, s2Len;
+	final int ALPHA = 31;
+	private ArrayList<String> S = new ArrayList<String>();
+	private ArrayList<String> T = new ArrayList<String>();
+	private ArrayList<String> U = new ArrayList<String>();
+	HashTable tableS1 = new HashTable(50);
+	HashTable tableS2 = new HashTable(50);
 
 	public HashStringSimilarity(String s1, String s2, int sLength)
 	{
-		this.s1 = s1;
-		this.s2 = s2;
-		sLen = sLength;
-		s1Len = vectorLength(s1);
-		s2Len = vectorLength(s2);
+		this.sLength = sLength;
+		for (int i = 0; i < (s1.length() - sLength) + 1; i++){
+			String toAdd = s1.substring(i, i + sLength);
+			S.add(toAdd);
+			if (!U.contains(toAdd)) {
+				U.add(toAdd);
+			}
+		}
+		for (int i = 0; i < (s2.length() - sLength) + 1; i++) {
+			String toAdd = s2.substring(i, i + sLength);
+			T.add(toAdd);
+			if (!U.contains(toAdd)) {
+				U.add(toAdd);
+			}
+		}
+		createTables();
 	}
 
-	public float vectorLength(String input){
-		float length = 0;
+	private void createTables(){
 		int key;
-		HashTable table = new HashTable(50);
-		for(int i = 0; i <= input.length() - sLen; i++){
+		for(String shingle : S){
 			key = 0;
-			for(int j = 0; j < sLen; j++){
-				key += (int) input.charAt(i + j);
-				//System.out.println("Ascii: " + input.charAt(j + i) + " Value: " + (int) input.charAt(j + i));
+			for(int i = 0; i < shingle.length(); i++){
+				key += shingle.charAt(i);
 			}
-			Tuple tuple = new Tuple(key, input.substring(i, i + sLen));
-			table.add(tuple);
+			Tuple tuple = new Tuple(key, shingle);
+			tableS1.add(tuple);
 		}
+		for(String shingle : T){
+			key = 0;
+			key = strValue(shingle);
+			Tuple tuple = new Tuple(key, shingle);
+			tableS2.add(tuple);
+		}
+	}
 
-		for(int i = 0; i < table.buckets.length; i++){
-			if(table.buckets[i] != null){
-				length += (float) Math.pow(table.buckets[i].size(), 2);
-				System.out.println("bucket " + table.buckets[i] + " size: " + table.buckets[i].size());
+	private int duplicate(Tuple shingle, ArrayList<Tuple> tuples) {
+		int count = 0;
+		for (Tuple value : tuples) {
+			if (value.equals(shingle)) {
+				count++;
 			}
 		}
-		return (float) Math.sqrt(length);
+		return count;
+	}
+
+	public float vectorLength(HashTable table){
+		float vectorLength = 0;
+		for(ArrayList<Tuple> bucket : table.buckets){
+			if(bucket != null){
+				ArrayList<String> used = new ArrayList<String>();
+				for(Tuple tuple : bucket){
+					if(!used.contains(tuple.getValue())){
+						int count = duplicate(tuple, bucket);
+						vectorLength += count * count;
+						used.add(tuple.getValue());
+					}
+				}
+			}
+		}
+		return (float) Math.sqrt(vectorLength);
+	}
+
+	private int strValue(String str){
+		int key = 0;
+		for(int i = 0; i < str.length(); i++){
+			key += str.charAt(i);
+		}
+		return key;
 	}
 
 	public float lengthOfS1()
 	{
-		return s1Len;
+		return vectorLength(tableS1);
 	}
 
 	public float lengthOfS2()
 	{
-		return s2Len;
+		return vectorLength(tableS2);
+	}
+
+	private int helper(String str){
+		int count = 0;
+		Tuple tuple = new Tuple(strValue(str), str);
+		count += tableS1.search(tuple);
+		tuple = new Tuple(strValue(str), str);
+		count *= tableS2.search(tuple);
+		return count;
 	}
 
 	public float similarity()
 	{
-		return 0;
+		float similarity = 0;
+		for(String substring : U){
+			similarity += helper(substring);
+		}
+		return similarity / (vectorLength(tableS1) * vectorLength(tableS2));
 	}
+
     public static void main(String[] args){
-       HashStringSimilarity test = new HashStringSimilarity("hello", "world", 2);
-       System.out.println(test.vectorLength("helloolleh"));
-       //System.out.println(test.vectorLength("world"));
+       HashStringSimilarity test = new HashStringSimilarity("aroseisaroseisarose", "aroseisaflowerwhichisarose", 4);
+       test.tableS1.printTable(false);
+       System.out.println(test.lengthOfS1());
+       System.out.println(test.similarity());
     }
 }
