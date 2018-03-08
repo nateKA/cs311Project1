@@ -27,14 +27,27 @@ public class HashCodeSimilarity
 
 	public float lengthOfS1()
 	{
-		// implementation
-		return 0;
+		return (float)(helper(s1));
 	}
 
 	public float lengthOfS2()
 	{
-		// implementation
-		return 0;
+		return (float)(helper(s2));
+	}
+
+	private float helper(String str){
+		HashTable table = new HashTable(255);
+		int sum = 0;
+		for(int i = 0; i < str.length(); i++){
+			int key = str.charAt(i);
+			int contribution = table.search(key)==null?0:(table.search(key).size()*table.search(key).size());
+			sum -= contribution;
+			Tuple t = new Tuple(key,""+str.charAt(i));
+			table.add(t);
+			sum += table.search(key).size() * table.search(key).size();
+		}
+
+		return sum;
 	}
 
 	public float similarity()
@@ -53,8 +66,8 @@ public class HashCodeSimilarity
 		Tuple t = new Tuple(firstShingle,str.substring(0,sLength));
 		table.add(t);
 
-		for(int i = 1; i < str.length()-sLength; i++){
-			int nextShingle = firstShingle - str.charAt(i-1) + str.charAt(i+sLength);
+		for(int i = 1; i < str.length()-sLength+1; i++){
+			int nextShingle = firstShingle - str.charAt(i-1) + str.charAt(i+sLength-1);
 			Tuple shingle = new Tuple(nextShingle,str.substring(i,i+sLength));
 			table.add(shingle);
 		}
@@ -63,8 +76,8 @@ public class HashCodeSimilarity
 	}
 
 	public static void main(String[] args){
-		HashCodeSimilarity hcs = new HashCodeSimilarity("","",4);
-		HashTable table = hcs.getShingles("1234567");
-		table.printTable(false);
+		//{1268264612
+		HashCodeSimilarity hcs = new HashCodeSimilarity("1268264612","251188438",4);
+		System.out.println(hcs.lengthOfS1());
 	}
 }

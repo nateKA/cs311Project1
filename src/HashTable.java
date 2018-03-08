@@ -43,6 +43,10 @@ public class HashTable
 		table.printTable(true);
 	}
 
+	public ArrayList<Tuple> getBucket(int i ){
+		return buckets[i];
+	}
+
 	public int maxLoad()
 	{
 		ArrayList<Tuple> largest = buckets[0];
