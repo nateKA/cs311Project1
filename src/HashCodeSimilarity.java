@@ -27,15 +27,15 @@ public class HashCodeSimilarity
 
 	public float lengthOfS1()
 	{
-		return (float)(helper(s1));
+		return (float)Math.sqrt(vectorLengthHelper(s1));
 	}
 
 	public float lengthOfS2()
 	{
-		return (float)(helper(s2));
+		return (float)Math.sqrt(vectorLengthHelper(s2));
 	}
 
-	private float helper(String str){
+	private float vectorLengthHelper(String str){
 		HashTable table = new HashTable(255);
 		int sum = 0;
 		for(int i = 0; i < str.length(); i++){
