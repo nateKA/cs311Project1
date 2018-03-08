@@ -21,6 +21,9 @@ public class HashCodeSimilarity
 	private HashTable tableS2 = new HashTable(100);
 	private HashTable union = new HashTable(300);
 
+	/**
+	 * Takes both strings and creates a hashtable for each one
+	 */
 	public HashCodeSimilarity(String s1, String s2, int sLength)
 	{
 		// implementation
@@ -29,16 +32,28 @@ public class HashCodeSimilarity
 		buildTable(tableS2, s2);
 	}
 
+	/**
+	 * Computes the vector length of string s1
+	 * @return vector length of the string s1
+	 */
 	public float lengthOfS1()
 	{
 		return vectorLength(tableS1);
 	}
 
+	/**
+	 * Computes the vector length of string s2
+	 * @return vector length of string s2
+	 */
 	public float lengthOfS2()
 	{
 		return vectorLength(tableS2);
 	}
 
+	/**
+	 * Computes the similarity of the two strings using the union between the strings
+	 * @return similarity of the strings
+	 */
 	public float similarity()
 	{
 		float similarity = 0;
@@ -55,6 +70,12 @@ public class HashCodeSimilarity
 		return similarity / (vectorLength(tableS1) * vectorLength(tableS2));
 	}
 
+	/**
+	 * Breaks the input into substrings of shingleLength and then if they do not exist in the unionTable
+	 * they will be added.
+	 * @param table table to be filled
+	 * @param input input to break into substrings and add to the table
+	 */
 	private void buildTable(HashTable table, String input){
 		double a = 6;
 		int sum = 0;
@@ -86,6 +107,12 @@ public class HashCodeSimilarity
 		}
 	}
 
+	/**
+	 * Loops through the arraylist and determines the number of duplicates using each tuples key value
+	 * @param shingle the shingle to compare with
+	 * @param tuples the arraylist of tuples to compare to
+	 * @return the number of times shingle appears in tuples
+	 */
 	private int duplicate(Tuple shingle, ArrayList<Tuple> tuples) {
 		int count = 0;
 		if(tuples == null){
@@ -99,6 +126,11 @@ public class HashCodeSimilarity
 		return count;
 	}
 
+	/**
+	 * Calculates the vector length of the given table of substrings
+	 * @param table is a table of substrings
+	 * @return the vector length of the table
+	 */
 	private float vectorLength(HashTable table){
 		float vectorLength = 0;
 		for(ArrayList<Tuple> bucket : table.buckets){
@@ -116,6 +148,11 @@ public class HashCodeSimilarity
 		return (float) Math.sqrt(vectorLength);
 	}
 
+	/**
+	 * Used to ensure there is not a collision in union
+	 * @param i key
+	 * @return key
+	 */
 	private int probe(int i){
 		ArrayList<Tuple> a = union.search(i);
 		while(a!=null ){
