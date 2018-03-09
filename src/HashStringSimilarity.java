@@ -43,7 +43,6 @@ public class HashStringSimilarity
 				U.add(toAdd);
 			}
 		}
-		//createTables();
 	}
 
     /**
