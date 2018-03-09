@@ -77,7 +77,7 @@ public class HashCodeSimilarity
 	 * @param input input to break into substrings and add to the table
 	 */
 	private void buildTable(HashTable table, String input){
-		double a = 6;
+		int a = 31;
 		int sum = 0;
 
 		for(int i = 0; i < sLength; i++){
@@ -86,15 +86,16 @@ public class HashCodeSimilarity
 
 		Tuple tup = new Tuple(sum,input.substring(0,sLength));
 		table.add(tup);
+
 		int index = probe(sum);
 		if(union.search(index)==null)
 			union.add(new Tuple(index,tup.getValue()));
 
 		for(int i = 1; i <= input.length()-sLength; i++){
 			//we found another occurrence of i for f(S,i)
-			char passed = (char)(input.charAt(i-1)*Math.pow(a,sLength-1));
-			char arrived = input.charAt(i+sLength-1);
-			sum = (int)((sum - passed)*a) + arrived;
+			int passed = (int) input.charAt(i-1)* (int)Math.pow(a,sLength-1);
+			int arrived = input.charAt(i+sLength-1);
+			sum = ((sum - passed)*a) + arrived;
 
 			//tell table we found another i
 			Tuple t = new Tuple(sum,input.substring(i,i+sLength));
@@ -169,11 +170,11 @@ public class HashCodeSimilarity
 		HashCodeSimilarity hcs = new HashCodeSimilarity("aroseisaroseisarose","aroseisaflowerwhichisarose",4);
 		//hcs.lengthOfS2();
 		//hcs.vectorLengthHelper(hcs.s2);
-		System.out.println(Math.pow(hcs.lengthOfS1(),2));
+		//System.out.println(Math.pow(hcs.lengthOfS1(),2));
 		//System.out.println("///////////////////////////////////////////////////////////////");
 		//hcs.tableS2.printTable(false);
-		System.out.println(Math.pow(hcs.lengthOfS2(), 2));
-		System.out.println(hcs.similarity());
+		//System.out.println(Math.pow(hcs.lengthOfS2(), 2));
+		System.out.println("Hash code similarity: " + hcs.similarity());
 		//hcs.tableS1.printTable(false);
 		//System.out.println("///////////////////////////////////////////////////////////////");
 		//hcs.union.printTable(false);
