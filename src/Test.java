@@ -34,19 +34,21 @@ public class Test {
 
     public static void main(String[] args){
         Test test = new Test("test/shak1", "test/shak2", 8);
-        System.out.println(test.s1);
-        System.out.println(test.s2);
+
         long time = System.currentTimeMillis();
-        long curTime = 0;
-        HashStringSimilarity string = new HashStringSimilarity(test.s1, test.s2, 8);
+        HashStringSimilarity string = new HashStringSimilarity(test.s1, test.s2, 7);
         System.out.println(string.similarity());
         time = System.currentTimeMillis() - time;
         System.out.println("HashStringTime: " + time);
+
+        time = System.currentTimeMillis();
         BruteForceSimilarity brute = new BruteForceSimilarity(test.s1, test.s2, 8);
         System.out.println(brute.similarity());
         time = System.currentTimeMillis() - time;
         System.out.println("BruteForceTime: " + time);
-        HashCodeSimilarity hash = new HashCodeSimilarity(test.s1, test.s2, 8);
+
+        time = System.currentTimeMillis();
+        HashCodeSimilarity hash = new HashCodeSimilarity(test.s1, test.s2, 7);
         System.out.println(hash.similarity());
         time = System.currentTimeMillis() - time;
         System.out.println("HashCodeTime: " + time);
