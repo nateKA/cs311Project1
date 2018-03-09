@@ -36,14 +36,19 @@ public class Test {
         Test test = new Test("test/shak1", "test/shak2", 8);
         System.out.println(test.s1);
         System.out.println(test.s2);
-//        HashStringSimilarity string = new HashStringSimilarity(test.s1, test.s2, 8);
-//        System.out.println(string.similarity());
-//        BruteForceSimilarity brute = new BruteForceSimilarity(test.s1, test.s2, 8);
-//        System.out.println(brute.similarity());
+        long time = System.currentTimeMillis();
+        long curTime = 0;
+        HashStringSimilarity string = new HashStringSimilarity(test.s1, test.s2, 8);
+        System.out.println(string.similarity());
+        time = System.currentTimeMillis() - time;
+        System.out.println("HashStringTime: " + time);
+        BruteForceSimilarity brute = new BruteForceSimilarity(test.s1, test.s2, 8);
+        System.out.println(brute.similarity());
+        time = System.currentTimeMillis() - time;
+        System.out.println("BruteForceTime: " + time);
         HashCodeSimilarity hash = new HashCodeSimilarity(test.s1, test.s2, 8);
-        System.out.println("HashCodeSimilarity: " + hash.lengthOfS1());
-        System.out.println("VectorLength2: " + hash.lengthOfS2());
-        System.out.println(hash.lengthOfS1() * hash.lengthOfS2());
         System.out.println(hash.similarity());
+        time = System.currentTimeMillis() - time;
+        System.out.println("HashCodeTime: " + time);
     }
 }
