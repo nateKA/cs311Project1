@@ -17,9 +17,9 @@ public class HashCodeSimilarity
 {
 	// member fields and other member methods
 	private int sLength;
-	private HashTable tableS1 = new HashTable(100);
-	private HashTable tableS2 = new HashTable(100);
-	private HashTable union = new HashTable(300);
+	HashTable tableS1 = new HashTable(100);
+	HashTable tableS2 = new HashTable(100);
+	HashTable union = new HashTable(300);
 
 	/**
 	 * Takes both strings and creates a hashtable for each one
