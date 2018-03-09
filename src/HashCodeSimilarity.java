@@ -85,7 +85,7 @@ public class HashCodeSimilarity
 			vector += value*value;
 		}
 
-		union.printTable(false);
+		table.printTable(false);
 
 		return (float)Math.sqrt(vector);
 	}
@@ -136,6 +136,7 @@ public class HashCodeSimilarity
 			value++;
 			vector += value*value;
 		}
+		table.printTable(false);
 
 		return (float)Math.sqrt(vector);
 	}
@@ -214,8 +215,9 @@ public class HashCodeSimilarity
 
 	public static void main(String[] args){
 		//{1268264612
-		HashCodeSimilarity hcs = new HashCodeSimilarity("aroseisa","aroseisar",4);
-		hcs.lengthOfS2();
+		String s1 = FileReader.getStringFromFile("src/shak1");
+		String s2 = FileReader.getStringFromFile("src/shak2");
+		HashCodeSimilarity hcs = new HashCodeSimilarity(s1,s2,4);
 		System.out.println(Math.pow(hcs.lengthOfS1(),2));
 	}
 }
